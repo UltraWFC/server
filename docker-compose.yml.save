@@ -1,0 +1,53 @@
+version: "3"
+services:
+
+  haproxy:
+    image: haproxy:lts-alpine
+    container_name: dwc_haproxy
+    restart: unless-stopped
+    ports:
+     - 80:80
+    #network_mode: "service:gluetun"
+    volumes:
+     - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    sysctls:
+     - net.ipv4.ip_unprivileged_port_start=0
+
+  dwc:
+    build: .
+    container_name: dwc_server
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+    volumes:
+      - data:/dwc/data
+
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      #- 80:80
+      - 8000:8000
+      - 9000:9000
+      - 9001:9001
+      - 27500:27500
+      - 28910:28910
+      - 29900:29900
+      - 29901:29901
+      - 29920:29920
+      - 27900/udp
+      - 27901/udp
+    
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - VPN_ENDPOINT_IP=geese.jbritain.net
+      - VPN_ENDPOINT_PORT=51820
+      - WIREGUARD_PUBLIC_KEY=wAUaJMhAq3NFutLHIdF8AN0B5WG8RndfQKLPTEDHal0=
+      - WIREGUARD_PRIVATE_KEY=MF2h4OcG+08zStIWhUj2GgLnpgbUjqeWnBbZT11/xUQ=
+      - WIREGUARD_PRESHARED_KEY=hInQYw90ELRnJRj3xawIRleRKWRFWqFMKI24ZRAK1jY=
+      - WIREGUARD_ADDRESSES=10.64.84.4/24
+      
+
+volumes:
+  data:
