@@ -4,10 +4,8 @@ services:
   haproxy:
     image: haproxy:lts-alpine
     container_name: dwc_haproxy
+    network_mode: "service:wireguard"
     restart: unless-stopped
- #   ports:
- #    - 80:80
-    #network_mode: "service:wireguard"
     volumes:
      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     sysctls:
@@ -16,34 +14,11 @@ services:
   dwc:
     build: .
     container_name: dwc_server
+    network_mode: "service:wireguard"
     restart: unless-stopped
-    #network_mode: "service:wireguard"
     volumes:
       - data:/dwc/data
-
-  gluetun:
-    image: qmcgaw/gluetun
-    container_name: gluetun
-    #network_mode: "service:wireguard"
-    cap_add:
-      - NET_ADMIN
-
-    environment:
-      - HTTP_CONTROL_SERVER_ADDRESS=:8005
-      - FIREWALL=off
-      - VPN_SERVICE_PROVIDER=custom
-      - VPN_TYPE=wireguard
-      - VPN_ENDPOINT_IP=10.64.84.1
-      - VPN_ENDPOINT_PORT=51820
-      - WIREGUARD_PUBLIC_KEY=MBF/dy879ro2z9QcVeGF3W2juhOWer55nwMs81yiaRA=
-      - WIREGUARD_PRIVATE_KEY=MF2h4OcG+08zStIWhUj2GgLnpgbUjqeWnBbZT11/xUQ=
-      - WIREGUARD_PRESHARED_KEY=hInQYw90ELRnJRj3xawIRleRKWRFWqFMKI24ZRAK1jY=
-      - WIREGUARD_ADDRESSES=10.64.84.4/24
-
-    #networks:
-    #  static-network:
-    #    ipv4_address: 172.20.128.3
-
+  
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: wireguard
@@ -56,8 +31,8 @@ services:
       - TZ=Europe/London
       - SERVERURL=geese.jbritain.net #optional
       - SERVERPORT=51820 #optional
-      - PEERS=1 #optional
-      - PEERDNS=auto #optional
+      - PEERS=15 #optional
+      - PEERDNS=1.1.1.1 #optional
       - INTERNAL_SUBNET=10.64.84.0 #optional
       - ALLOWEDIPS=0.0.0.0/0 #optional
       - LOG_CONFS=true #optional
@@ -68,20 +43,16 @@ services:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      static-network:
+        ipv4_address: 172.64.84.4
     restart: unless-stopped
-    #networks:
-    #  static-network:
-    #    ipv4_address: 172.20.128.2
 
-#networks:
-#  static-network:
-#    driver: bridge
-#    ipam:
-#      config:
-#        - subnet: 172.20.0.0/16
-#          gateway: 172.20.0.1
-#          docker-compose v3+ do not use ip_range
-#          ip_range: 172.28.5.0/24
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.64.0.0/16
 
 volumes:
   data:
