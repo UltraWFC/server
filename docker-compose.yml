@@ -32,9 +32,9 @@ services:
       - SERVERURL=geese.jbritain.net #optional
       - SERVERPORT=51820 #optional
       - PEERS=15 #optional
-      - PEERDNS=1.1.1.1 #optional
+#      - PEERDNS= #optional
       - INTERNAL_SUBNET=10.64.84.0 #optional
-      - ALLOWEDIPS=0.0.0.0/0 #optional
+      - ALLOWEDIPS=10.64.84.0/24, 172.64.84.0/24 #optional
       - LOG_CONFS=true #optional
     volumes:
       - ./config/wireguard:/config
