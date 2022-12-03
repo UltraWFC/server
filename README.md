@@ -1,7 +1,10 @@
-# !!! READ ME DUDE !!!
-# COPY peer.conf FROM THE REPO ROOT TO ./config/wireguard/templates
-# THIS WILL BE FIXED LATER
-# IT IS BECAUSE OF DNS
+# ⚠️ READ ME DUDE ⚠️
+COPY peer.conf FROM THE REPO ROOT TO ./config/wireguard/templates
+
+**THIS WILL BE FIXED LATER**
+
+**IT IS BECAUSE OF DNS**
+
 # DWC Docker Deployment
 
 This repo provides a Docker setup, which enables you to run your own Multiplayer Server for several Nintendo Wii Games (Mario Kart Wii, SSBB, etc.).
